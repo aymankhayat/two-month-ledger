@@ -1,0 +1,659 @@
+<title>Two-Month Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,440;9..144,560;9..144,650&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef0e9;
+  --surface:#fdfdfa;
+  --surface-2:#f4f5ee;
+  --ink:#1c2a2b;
+  --ink-soft:#5c6a64;
+  --ink-faint:#8b978f;
+  --line:#d8dccf;
+  --line-soft:#e6e8dd;
+  --accent:#a3703c;
+  --accent-ink:#7a5228;
+  --accent-soft:#efe1cb;
+  --good:#3f7d58;
+  --good-soft:#e2eee3;
+  --warn:#b5602e;
+  --warn-soft:#f6e6d8;
+  --critical:#a13d3d;
+  --critical-soft:#f5e0de;
+  --shadow: 0 1px 2px rgba(28,42,43,0.04), 0 6px 20px -8px rgba(28,42,43,0.12);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono:'IBM Plex Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111a1b;
+    --surface:#182324;
+    --surface-2:#1e2a2b;
+    --ink:#e9e7dd;
+    --ink-soft:#a6b1ab;
+    --ink-faint:#748680;
+    --line:#2b3838;
+    --line-soft:#233030;
+    --accent:#d2a066;
+    --accent-ink:#e6c393;
+    --accent-soft:#3a2e1c;
+    --good:#79bb92;
+    --good-soft:#1d2e23;
+    --warn:#dd9563;
+    --warn-soft:#3a2a1c;
+    --critical:#e08787;
+    --critical-soft:#3a2222;
+    --shadow: 0 1px 2px rgba(0,0,0,0.25), 0 8px 24px -10px rgba(0,0,0,0.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111a1b;
+  --surface:#182324;
+  --surface-2:#1e2a2b;
+  --ink:#e9e7dd;
+  --ink-soft:#a6b1ab;
+  --ink-faint:#748680;
+  --line:#2b3838;
+  --line-soft:#233030;
+  --accent:#d2a066;
+  --accent-ink:#e6c393;
+  --accent-soft:#3a2e1c;
+  --good:#79bb92;
+  --good-soft:#1d2e23;
+  --warn:#dd9563;
+  --warn-soft:#3a2a1c;
+  --critical:#e08787;
+  --critical-soft:#3a2222;
+  --shadow: 0 1px 2px rgba(0,0,0,0.25), 0 8px 24px -10px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);}
+.wrap{max-width:1180px;margin:0 auto;padding:36px 24px 64px;}
+h1,h2,h3{font-family:var(--font-display);font-weight:650;letter-spacing:-0.01em;text-wrap:balance;margin:0;}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+a{color:inherit;}
+button{font-family:var(--font-body);cursor:pointer;}
+input,select{font-family:var(--font-body);}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px;}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 6px;}
+.top h1{font-size:34px;}
+.dates{margin:6px 0 0;color:var(--ink-soft);font-size:14px;}
+.countdown{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 22px;text-align:center;box-shadow:var(--shadow);min-width:130px;}
+.count-num{display:block;font-family:var(--font-mono);font-size:30px;font-weight:600;line-height:1;color:var(--accent-ink);}
+.count-label{display:block;font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;}
+
+/* stat tiles */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);}
+.stat .label{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;}
+.stat .value{font-family:var(--font-mono);font-size:24px;font-weight:600;margin-top:6px;color:var(--ink);}
+.stat .sub{font-size:12px;color:var(--ink-faint);margin-top:4px;}
+.stat.accent .value{color:var(--accent-ink);}
+
+/* pace card */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow);margin-bottom:16px;}
+.pace-card{margin-bottom:20px;}
+.pace-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;}
+.pace-head h2{font-size:18px;}
+.pace-status{font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;}
+.pace-status.good{background:var(--good-soft);color:var(--good);}
+.pace-status.warn{background:var(--warn-soft);color:var(--warn);}
+.pace-status.critical{background:var(--critical-soft);color:var(--critical);}
+.pace-bar-track{position:relative;height:14px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;overflow:visible;}
+.pace-bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--accent);transition:width .3s ease;}
+.pace-time-marker{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:0.55;}
+.pace-legend{display:flex;gap:22px;margin-top:10px;font-size:12.5px;color:var(--ink-soft);flex-wrap:wrap;}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+.dot-fill{background:var(--accent);}
+.dot-marker{background:var(--ink);opacity:.55;}
+
+/* two column grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.col{display:flex;flex-direction:column;}
+
+.card h2{font-size:17px;margin-bottom:2px;}
+.card-sub{font-size:12.5px;color:var(--ink-soft);margin:2px 0 16px;}
+
+/* rows */
+.row-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line-soft);}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:13.5px;}
+.row .name{flex:1;min-width:0;}
+.row .name strong{display:block;font-weight:600;}
+.row .name span{display:block;font-size:11.5px;color:var(--ink-faint);margin-top:1px;}
+.row .amt{font-family:var(--font-mono);font-weight:600;white-space:nowrap;}
+.row .del{background:none;border:none;color:var(--ink-faint);font-size:16px;line-height:1;padding:4px 6px;border-radius:6px;}
+.row .del:hover{color:var(--critical);background:var(--critical-soft);}
+.empty-note{color:var(--ink-faint);font-size:13px;padding:14px 0;border-top:1px solid var(--line-soft);}
+
+.tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line);text-transform:uppercase;letter-spacing:0.04em;}
+.tag.food{background:var(--good-soft);color:var(--good);border-color:transparent;}
+.tag.groceries{background:var(--good-soft);color:var(--good);border-color:transparent;}
+.tag.fun{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent;}
+.tag.clothes{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent;}
+.tag.savings{background:var(--warn-soft);color:var(--warn);border-color:transparent;}
+.tag.other{background:var(--surface-2);color:var(--ink-soft);}
+
+/* forms */
+.add-form{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.add-form input, .add-form select{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13.5px;color:var(--ink);}
+.add-form input:focus, .add-form select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+.add-form .amt-input{width:90px;}
+.add-form .name-input{flex:1;min-width:110px;}
+.add-form .date-input{width:135px;}
+.add-form .desc-input{flex:1;min-width:110px;}
+.add-btn{background:var(--ink);color:var(--surface);border:none;border-radius:8px;padding:8px 16px;font-size:13.5px;font-weight:600;white-space:nowrap;}
+.add-btn:hover{background:var(--accent-ink);}
+
+/* footer sums */
+.sum-line{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13.5px;}
+.sum-line .amt{font-family:var(--font-mono);font-weight:600;}
+.mini-bar-track{height:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;margin-top:8px;overflow:hidden;}
+.mini-bar-fill{height:100%;background:var(--accent);border-radius:5px;}
+.mini-bar-fill.over{background:var(--critical);}
+
+/* category breakdown */
+.cat-breakdown{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+.cat-row{display:flex;align-items:center;gap:10px;font-size:12.5px;}
+.cat-row .cat-label{width:76px;color:var(--ink-soft);}
+.cat-row .cat-track{flex:1;height:7px;background:var(--surface-2);border-radius:4px;overflow:hidden;}
+.cat-row .cat-fill{height:100%;background:var(--accent);}
+.cat-row .cat-amt{width:64px;text-align:right;font-family:var(--font-mono);}
+
+/* advice card */
+.advice-lead{font-size:14px;line-height:1.55;color:var(--ink-soft);margin-bottom:16px;}
+.advice-lead strong{color:var(--ink);}
+.split-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
+.split-row .val{font-family:var(--font-mono);font-weight:600;}
+input[type="range"]{width:100%;accent-color:var(--accent);margin:8px 0 18px;}
+.split-visual{display:flex;height:10px;border-radius:6px;overflow:hidden;margin-bottom:18px;border:1px solid var(--line);}
+.split-visual .a{background:var(--accent);}
+.split-visual .b{background:var(--surface-2);}
+.checklist{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface-2);border-radius:10px;border:1px solid var(--line);font-size:13.5px;}
+.checklist input{width:17px;height:17px;accent-color:var(--good);}
+.checklist.done{opacity:0.7;}
+.checklist.done .cl-text{text-decoration:line-through;}
+
+/* settings */
+details.settings{margin-top:6px;}
+details.settings summary{cursor:pointer;font-size:13px;color:var(--ink-soft);padding:10px 0;list-style:none;display:flex;align-items:center;gap:6px;}
+details.settings summary::-webkit-details-marker{display:none;}
+details.settings summary:before{content:'⚙';font-size:13px;}
+.settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:6px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.04em;}
+.field input{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13.5px;color:var(--ink);}
+
+.foot{text-align:center;color:var(--ink-faint);font-size:11.5px;margin-top:30px;}
+
+@media (max-width: 860px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .grid-2{grid-template-columns:1fr;}
+  .settings-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="title-block">
+      <p class="eyebrow">Personal runway</p>
+      <h1>Two-Month Ledger</h1>
+      <p class="dates mono" id="dateRange">—</p>
+    </div>
+    <div class="countdown">
+      <span class="count-num mono" id="daysLeft">–</span>
+      <span class="count-label">days left</span>
+    </div>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="card pace-card">
+    <div class="pace-head">
+      <h2>Pace</h2>
+      <span class="pace-status mono" id="paceStatus">—</span>
+    </div>
+    <div class="pace-bar-track">
+      <div class="pace-bar-fill" id="paceFill" style="width:0%"></div>
+      <div class="pace-time-marker" id="paceMarker" style="left:0%"></div>
+    </div>
+    <div class="pace-legend">
+      <span><i class="dot dot-fill"></i>Spent <b class="mono" id="paceSpentPct">0%</b> of your flexible budget</span>
+      <span><i class="dot dot-marker"></i><b class="mono" id="paceTimePct">0%</b> of the runway has passed</span>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="col">
+      <div class="card" id="subsCard">
+        <h2>Subscriptions</h2>
+        <p class="card-sub">Fixed monthly cost — target <span class="mono" id="subsTargetLabel">€300</span>/mo</p>
+        <div class="row-list" id="subsList"></div>
+        <form class="add-form" id="subsForm">
+          <input class="name-input" name="name" placeholder="e.g. Spotify" required>
+          <input class="amt-input" name="amount" type="number" step="0.01" min="0" placeholder="€/mo" required>
+          <button class="add-btn" type="submit">Add</button>
+        </form>
+        <div class="sum-line">
+          <span>Total planned</span>
+          <span class="amt mono" id="subsSum">€0.00</span>
+        </div>
+        <div class="mini-bar-track"><div class="mini-bar-fill" id="subsBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="card" id="adviceCard">
+        <h2>The leftover</h2>
+        <p class="advice-lead" id="adviceLead"></p>
+        <div class="split-row"><span>Emergency fund (move out, don't touch)</span><span class="val mono" id="splitEmergency">€0</span></div>
+        <div class="split-row"><span>Flex buffer (stays in checking, for overages)</span><span class="val mono" id="splitFlex">€0</span></div>
+        <div class="split-visual"><div class="a" id="splitVisualA" style="width:70%"></div><div class="b" id="splitVisualB" style="width:30%"></div></div>
+        <input type="range" id="splitSlider" min="40" max="100" step="5" value="70">
+        <label class="checklist" id="checklistWrap">
+          <input type="checkbox" id="movedCheckbox">
+          <span class="cl-text">I've moved the emergency fund to a separate account</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card" id="expensesCard">
+        <h2>Spending log</h2>
+        <p class="card-sub">Food, groceries, fun, clothes, savings & extras — budget <span class="mono" id="spendTargetLabel">€1,000</span> total</p>
+        <form class="add-form" id="expenseForm">
+          <input class="date-input" name="date" type="date" required>
+          <select name="category" required>
+            <option value="Food">Food</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Fun">Fun</option>
+            <option value="Clothes">Clothes</option>
+            <option value="Savings">Savings</option>
+            <option value="Other">Other</option>
+          </select>
+          <input class="desc-input" name="description" placeholder="note (optional)">
+          <input class="amt-input" name="amount" type="number" step="0.01" min="0" placeholder="€" required>
+          <button class="add-btn" type="submit">Add</button>
+        </form>
+        <div class="row-list" id="expenseList" style="margin-top:14px;max-height:340px;overflow-y:auto;"></div>
+        <div class="cat-breakdown" id="catBreakdown"></div>
+        <div class="sum-line">
+          <span>Spent so far</span>
+          <span class="amt mono" id="spendSum">€0.00 / €1,000.00</span>
+        </div>
+        <div class="mini-bar-track"><div class="mini-bar-fill" id="spendBar" style="width:0%"></div></div>
+        <div class="sum-line">
+          <span>Today's daily allowance</span>
+          <span class="amt mono" id="dailyAllowanceLine">€0.00/day</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <details class="settings" id="settingsPanel">
+    <summary>Plan settings</summary>
+    <div class="settings-grid">
+      <div class="field"><label>Total funds (€)</label><input type="number" step="1" id="cfgTotalFunds"></div>
+      <div class="field"><label>Start date</label><input type="date" id="cfgStartDate"></div>
+      <div class="field"><label>End date</label><input type="date" id="cfgEndDate"></div>
+      <div class="field"><label>Subscriptions / month (€)</label><input type="number" step="1" id="cfgMonthlySub"></div>
+      <div class="field"><label>Spending / month (€)</label><input type="number" step="1" id="cfgMonthlySpend"></div>
+      <div class="field"><label>Period (months)</label><input type="number" step="0.1" id="cfgPeriodMonths"></div>
+    </div>
+  </details>
+
+  <p class="foot" id="storageNote">Saved automatically.</p>
+</div>
+
+<script>
+const DEFAULT_CONFIG = {
+  totalFunds: 2000,
+  monthlySubscription: 300,
+  monthlySpending: 500,
+  periodMonths: 2,
+  startDate: "2024-01-01",
+  endDate: "2024-03-01",
+  emergencySplitPct: 70,
+  movedToSavings: false
+};
+
+let db = null;
+let mode = 'local';
+let config = { ...DEFAULT_CONFIG };
+let subscriptions = [];
+let expenses = [];
+
+const LK_CONFIG = 'ledger_config_v1';
+const LK_SUBS = 'ledger_subs_v1';
+const LK_EXP = 'ledger_expenses_v1';
+
+const fmt = (n) => new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(Number(n) || 0);
+const pct = (n) => Math.round(Math.max(0, Math.min(1, n)) * 100) + '%';
+function toDateOnly(d){ const dt = new Date(d); return new Date(Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate())); }
+function daysBetween(a, b){ return Math.round((toDateOnly(b) - toDateOnly(a)) / 86400000); }
+function todayISO(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDateLabel(iso){ return new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+
+function computed(){
+  const totalDays = Math.max(daysBetween(config.startDate, config.endDate), 1);
+  const today = todayISO();
+  const rawElapsed = daysBetween(config.startDate, today);
+  const daysElapsed = Math.min(Math.max(rawElapsed, 0), totalDays);
+  const daysRemaining = totalDays - daysElapsed;
+  const subsBudgetTotal = config.monthlySubscription * config.periodMonths;
+  const spendBudgetTotal = config.monthlySpending * config.periodMonths;
+  const committedTotal = subsBudgetTotal + spendBudgetTotal;
+  const leftover = config.totalFunds - committedTotal;
+  const subsActual = subscriptions.reduce((s, x) => s + Number(x.amount || 0), 0);
+  const spentActual = expenses.reduce((s, x) => s + Number(x.amount || 0), 0);
+  const remainingSpend = spendBudgetTotal - spentActual;
+  const dailyAllowance = remainingSpend / Math.max(daysRemaining, 1);
+  const pctTime = daysElapsed / totalDays;
+  const pctSpend = spendBudgetTotal > 0 ? spentActual / spendBudgetTotal : 0;
+  return { totalDays, daysElapsed, daysRemaining, subsBudgetTotal, spendBudgetTotal, committedTotal, leftover, subsActual, spentActual, remainingSpend, dailyAllowance, pctTime, pctSpend };
+}
+
+/* ---------- storage ---------- */
+async function initStorage(){
+  try { db = await claude.use('db'); } catch(e){ db = null; }
+  mode = db ? 'db' : 'local';
+  document.getElementById('storageNote').textContent = mode === 'db'
+    ? 'Saved automatically — synced across every device you open this on.'
+    : 'Saved in this browser only.';
+}
+
+function watchConfig(){
+  if (mode === 'db'){
+    db.doc('config/main').onSnapshot((snap) => {
+      config = { ...DEFAULT_CONFIG, ...(snap.exists ? snap.data() : {}) };
+      renderAll();
+    }, () => { config = { ...DEFAULT_CONFIG }; renderAll(); });
+  } else {
+    const raw = localStorage.getItem(LK_CONFIG);
+    config = { ...DEFAULT_CONFIG, ...(raw ? JSON.parse(raw) : {}) };
+    renderAll();
+  }
+}
+
+async function saveConfig(patch){
+  const next = { ...config, ...patch };
+  if (mode === 'db'){
+    await db.doc('config/main').set(next);
+  } else {
+    config = next;
+    localStorage.setItem(LK_CONFIG, JSON.stringify(next));
+    renderAll();
+  }
+}
+
+function watchSubscriptions(){
+  if (mode === 'db'){
+    db.collection('subscriptions').orderBy('createdAt', 'asc').onSnapshot((snap) => {
+      subscriptions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderSubscriptions(); renderStats(); renderPace(); renderAdvice();
+    });
+  } else {
+    subscriptions = JSON.parse(localStorage.getItem(LK_SUBS) || '[]');
+    renderSubscriptions();
+  }
+}
+
+async function addSubscription(name, amount){
+  const doc = { name, amount, createdAt: Date.now() };
+  if (mode === 'db'){
+    await db.collection('subscriptions').add(doc);
+  } else {
+    doc.id = 'l' + Date.now();
+    subscriptions.push(doc);
+    localStorage.setItem(LK_SUBS, JSON.stringify(subscriptions));
+    renderSubscriptions(); renderStats(); renderPace(); renderAdvice();
+  }
+}
+
+async function deleteSubscription(id){
+  if (mode === 'db'){
+    await db.collection('subscriptions').doc(id).delete();
+  } else {
+    subscriptions = subscriptions.filter(s => s.id !== id);
+    localStorage.setItem(LK_SUBS, JSON.stringify(subscriptions));
+    renderSubscriptions(); renderStats(); renderPace(); renderAdvice();
+  }
+}
+
+function watchExpenses(){
+  if (mode === 'db'){
+    db.collection('expenses').orderBy('createdAt', 'desc').onSnapshot((snap) => {
+      expenses = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderExpenses(); renderStats(); renderPace();
+    });
+  } else {
+    expenses = JSON.parse(localStorage.getItem(LK_EXP) || '[]');
+    renderExpenses();
+  }
+}
+
+async function addExpense(date, category, description, amount){
+  const doc = { date, category, description, amount, createdAt: Date.now() };
+  if (mode === 'db'){
+    await db.collection('expenses').add(doc);
+  } else {
+    doc.id = 'l' + Date.now();
+    expenses.unshift(doc);
+    localStorage.setItem(LK_EXP, JSON.stringify(expenses));
+    renderExpenses(); renderStats(); renderPace();
+  }
+}
+
+async function deleteExpense(id){
+  if (mode === 'db'){
+    await db.collection('expenses').doc(id).delete();
+  } else {
+    expenses = expenses.filter(x => x.id !== id);
+    localStorage.setItem(LK_EXP, JSON.stringify(expenses));
+    renderExpenses(); renderStats(); renderPace();
+  }
+}
+
+/* ---------- render ---------- */
+function renderAll(){
+  document.getElementById('dateRange').textContent = fmtDateLabel(config.startDate) + '  →  ' + fmtDateLabel(config.endDate);
+  document.getElementById('subsTargetLabel').textContent = fmt(config.monthlySubscription);
+  document.getElementById('cfgTotalFunds').value = config.totalFunds;
+  document.getElementById('cfgStartDate').value = config.startDate;
+  document.getElementById('cfgEndDate').value = config.endDate;
+  document.getElementById('cfgMonthlySub').value = config.monthlySubscription;
+  document.getElementById('cfgMonthlySpend').value = config.monthlySpending;
+  document.getElementById('cfgPeriodMonths').value = config.periodMonths;
+  document.getElementById('splitSlider').value = config.emergencySplitPct;
+  document.getElementById('movedCheckbox').checked = !!config.movedToSavings;
+  const expDateInput = document.querySelector('#expenseForm input[name="date"]');
+  if (expDateInput && !expDateInput.value) expDateInput.value = todayISO();
+
+  renderStats();
+  renderPace();
+  renderSubscriptions();
+  renderExpenses();
+  renderAdvice();
+}
+
+function renderStats(){
+  const c = computed();
+  document.getElementById('daysLeft').textContent = c.daysRemaining;
+  const stats = [
+    { label: 'Total funds', value: fmt(config.totalFunds), sub: 'in your account today' },
+    { label: 'Committed, 2 months', value: fmt(c.committedTotal), sub: fmt(c.subsBudgetTotal) + ' subs + ' + fmt(c.spendBudgetTotal) + ' spending' },
+    { label: 'Leftover to plan', value: fmt(c.leftover), sub: 'not yet allocated' },
+    { label: "Today's allowance", value: fmt(c.dailyAllowance) + '/day', sub: c.daysRemaining + ' days of flexible budget left' },
+  ];
+  document.getElementById('stats').innerHTML = stats.map((s, i) => `
+    <div class="stat${i===2?' accent':''}">
+      <div class="label">${s.label}</div>
+      <div class="value mono">${s.value}</div>
+      <div class="sub">${s.sub}</div>
+    </div>`).join('');
+}
+
+function renderPace(){
+  const c = computed();
+  document.getElementById('paceFill').style.width = pct(c.pctSpend);
+  document.getElementById('paceMarker').style.left = pct(c.pctTime);
+  document.getElementById('paceSpentPct').textContent = pct(c.pctSpend);
+  document.getElementById('paceTimePct').textContent = pct(c.pctTime);
+  const diff = c.pctSpend - c.pctTime;
+  const statusEl = document.getElementById('paceStatus');
+  let label, cls;
+  if (diff <= 0.05) { label = 'On pace'; cls = 'good'; }
+  else if (diff <= 0.2) { label = 'Slightly ahead'; cls = 'warn'; }
+  else { label = 'Spending too fast'; cls = 'critical'; }
+  statusEl.textContent = label;
+  statusEl.className = 'pace-status mono ' + cls;
+  const fillEl = document.getElementById('paceFill');
+  fillEl.style.background = cls === 'good' ? 'var(--good)' : cls === 'warn' ? 'var(--warn)' : 'var(--critical)';
+}
+
+function renderSubscriptions(){
+  const list = document.getElementById('subsList');
+  if (subscriptions.length === 0){
+    list.innerHTML = '<p class="empty-note">No subscriptions logged yet — add the ones that make up your ' + fmt(config.monthlySubscription) + '/month.</p>';
+  } else {
+    list.innerHTML = subscriptions.map(s => `
+      <div class="row" data-id="${s.id}">
+        <div class="name"><strong>${escapeHtml(s.name)}</strong></div>
+        <div class="amt mono">${fmt(s.amount)}/mo</div>
+        <button class="del" data-del-sub="${s.id}" title="Remove">×</button>
+      </div>`).join('');
+  }
+  const sum = subscriptions.reduce((s, x) => s + Number(x.amount || 0), 0);
+  document.getElementById('subsSum').textContent = fmt(sum);
+  const barPct = config.monthlySubscription > 0 ? Math.min(sum / config.monthlySubscription, 1.4) : 0;
+  const bar = document.getElementById('subsBar');
+  bar.style.width = Math.min(barPct, 1) * 100 + '%';
+  bar.className = 'mini-bar-fill' + (sum > config.monthlySubscription ? ' over' : '');
+}
+
+const CATS = ['Food', 'Groceries', 'Fun', 'Clothes', 'Savings', 'Other'];
+
+function renderExpenses(){
+  const list = document.getElementById('expenseList');
+  if (expenses.length === 0){
+    list.innerHTML = '<p class="empty-note">No expenses logged yet — add your first purchase to start tracking.</p>';
+  } else {
+    const sorted = [...expenses].sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.createdAt||0)-(a.createdAt||0));
+    list.innerHTML = sorted.map(e => `
+      <div class="row" data-id="${e.id}">
+        <div class="name">
+          <strong>${escapeHtml(e.description) || e.category} <span class="tag ${e.category.toLowerCase()}">${e.category}</span></strong>
+          <span class="mono">${fmtDateLabel(e.date)}</span>
+        </div>
+        <div class="amt mono">${fmt(e.amount)}</div>
+        <button class="del" data-del-exp="${e.id}" title="Remove">×</button>
+      </div>`).join('');
+  }
+
+  const c = computed();
+  document.getElementById('spendTargetLabel').textContent = fmt(c.spendBudgetTotal);
+  document.getElementById('spendSum').textContent = fmt(c.spentActual) + ' / ' + fmt(c.spendBudgetTotal);
+  const barPct = c.spendBudgetTotal > 0 ? c.spentActual / c.spendBudgetTotal : 0;
+  const bar = document.getElementById('spendBar');
+  bar.style.width = Math.min(barPct, 1) * 100 + '%';
+  bar.className = 'mini-bar-fill' + (c.spentActual > c.spendBudgetTotal ? ' over' : '');
+  document.getElementById('dailyAllowanceLine').textContent = fmt(c.dailyAllowance) + '/day';
+
+  const byCat = {};
+  CATS.forEach(cat => byCat[cat] = 0);
+  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + Number(e.amount || 0); });
+  const max = Math.max(1, ...Object.values(byCat));
+  document.getElementById('catBreakdown').innerHTML = CATS.map(cat => `
+    <div class="cat-row">
+      <span class="cat-label">${cat}</span>
+      <span class="cat-track"><span class="cat-fill" style="width:${(byCat[cat]/max)*100}%"></span></span>
+      <span class="cat-amt mono">${fmt(byCat[cat])}</span>
+    </div>`).join('');
+}
+
+function renderAdvice(){
+  const c = computed();
+  document.getElementById('adviceLead').innerHTML =
+    `You have <strong>${fmt(c.leftover)}</strong> left after covering two months of subscriptions and spending. ` +
+    `Since you don't have an emergency fund yet, the strongest move is to get most of it out of easy reach: ` +
+    `move the bulk into a separate savings account today, and keep a smaller slice in checking in case this budget runs tight in month one.`;
+
+  const pctA = config.emergencySplitPct;
+  const emergency = c.leftover * (pctA / 100);
+  const flex = c.leftover - emergency;
+  document.getElementById('splitEmergency').textContent = fmt(emergency);
+  document.getElementById('splitFlex').textContent = fmt(flex);
+  document.getElementById('splitVisualA').style.width = pctA + '%';
+  document.getElementById('splitVisualB').style.width = (100 - pctA) + '%';
+
+  const wrap = document.getElementById('checklistWrap');
+  wrap.classList.toggle('done', !!config.movedToSavings);
+}
+
+function escapeHtml(str){
+  return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ---------- events ---------- */
+document.getElementById('subsForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const name = fd.get('name').trim();
+  const amount = parseFloat(fd.get('amount'));
+  if (!name || isNaN(amount)) return;
+  addSubscription(name, amount);
+  e.target.reset();
+});
+
+document.getElementById('expenseForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const date = fd.get('date') || todayISO();
+  const category = fd.get('category');
+  const description = fd.get('description').trim();
+  const amount = parseFloat(fd.get('amount'));
+  if (isNaN(amount)) return;
+  addExpense(date, category, description, amount);
+  e.target.reset();
+  document.querySelector('#expenseForm input[name="date"]').value = todayISO();
+});
+
+document.getElementById('subsList').addEventListener('click', (e) => {
+  const id = e.target.getAttribute('data-del-sub');
+  if (id) deleteSubscription(id);
+});
+document.getElementById('expenseList').addEventListener('click', (e) => {
+  const id = e.target.getAttribute('data-del-exp');
+  if (id) deleteExpense(id);
+});
+
+document.getElementById('splitSlider').addEventListener('input', (e) => {
+  saveConfig({ emergencySplitPct: parseInt(e.target.value, 10) });
+});
+document.getElementById('movedCheckbox').addEventListener('change', (e) => {
+  saveConfig({ movedToSavings: e.target.checked });
+});
+
+['cfgTotalFunds','cfgStartDate','cfgEndDate','cfgMonthlySub','cfgMonthlySpend','cfgPeriodMonths'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    saveConfig({
+      totalFunds: parseFloat(document.getElementById('cfgTotalFunds').value) || 0,
+      startDate: document.getElementById('cfgStartDate').value,
+      endDate: document.getElementById('cfgEndDate').value,
+      monthlySubscription: parseFloat(document.getElementById('cfgMonthlySub').value) || 0,
+      monthlySpending: parseFloat(document.getElementById('cfgMonthlySpend').value) || 0,
+      periodMonths: parseFloat(document.getElementById('cfgPeriodMonths').value) || 1,
+    });
+  });
+});
+
+/* ---------- boot ---------- */
+(async function boot(){
+  renderAll();
+  await initStorage();
+  watchConfig();
+  watchSubscriptions();
+  watchExpenses();
+})();
+</script>
